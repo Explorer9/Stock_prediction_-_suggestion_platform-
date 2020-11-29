@@ -110,6 +110,19 @@ plt.legend()
 st.pyplot(fig2)
 Aclose=inp[['Close']]
 
+inp['L14'] = inp['Low'].rolling(window=14).min()
+#Create the "H14" column in the DataFrame
+inp['H14'] = inp['High'].rolling(window=14).max()
+#Create the "%K" column in the DataFrame
+inp['%K'] = 100*((inp['Close'] - inp['L14']) / (inp['H14'] - inp['L14']) )
+#Create the "%D" column in the DataFrame
+inp['%D'] = inp['%K'].rolling(window=3).mean()
+
+fig5, axes = plt.subplots(nrows=2, ncols=1,figsize=(20,10))
+inp['Close'].plot(ax=axes[0]); axes[0].set_title('Close')
+inp[['%K','%D']].plot(ax=axes[1]); axes[1].set_title('Oscillator')
+st.pyplot(fig5)
+
 Days_forecast=int(days)
 Aclose['Prediction'] = Aclose[['Close']].shift(-Days_forecast)
 x = np.array(Aclose.drop(['Prediction'],1))
